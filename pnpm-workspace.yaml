@@ -1,0 +1,9 @@
+minimumReleaseAge: 10080
+minimumReleaseAgeIgnoreMissingTime: false
+trustLockfile: false
+strictDepBuilds: true
+allowBuilds:
+  unrs-resolver: true
+  sharp: true
+verifyDepsBeforeRun: false
+packageImportMethod: clone-or-copy

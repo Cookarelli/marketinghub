@@ -1,0 +1,15 @@
+import {identity,bucket,saveRecord,apiError} from '@/lib/storage';
+import {z} from 'zod';
+const schema=z.object({name:z.string().min(1).max(250),type:z.enum(['image/jpeg','image/png','image/webp','video/mp4','video/quicktime','video/webm']),size:z.number().int().positive().max(40*1024*1024)});
+export async function POST(request:Request){
+ try {
+  const workspace=await identity(request);
+  const raw=await request.text();if(raw.length>4096)return Response.json({error:'Invalid upload request.'},{status:413});
+  let json;try{json=JSON.parse(raw);}catch{return Response.json({error:'Invalid upload request.'},{status:400});}
+  const result=schema.safeParse(json);if(!result.success)return Response.json({error:'Use a supported image or video under 40 MB.'},{status:400});
+  const id=crypto.randomUUID(),key=workspace+'/'+id;
+  const {data,error}=await (await bucket()).createSignedUploadUrl(key,{upsert:false});if(error)throw error;
+  await saveRecord(workspace,'upload',id,{...result.data,id,key,createdAt:new Date().toISOString()});
+  return Response.json({id,signedUrl:data.signedUrl},{headers:{'Cache-Control':'no-store'}});
+ }catch(e){return apiError(e);}
+}

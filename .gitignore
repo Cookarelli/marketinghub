@@ -1,0 +1,9 @@
+node_modules/
+.next/
+.sites-runtime/
+.vercel/
+.env*
+!.env.example
+*.tsbuildinfo
+backups/
+supabase/.temp/
