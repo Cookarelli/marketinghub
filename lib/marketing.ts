@@ -1,14 +1,5 @@
 export const PLATFORMS = ['facebook','instagram','x','snapchat','tiktok'];
 export const DEFAULT_PLAN = {budget:5000,launchDate:'',address:'',campaign:'northside_new_store_launch',aov:85,margin:25};
-export const WEEK = [
- {day:'Monday',title:'Weekend hits + picks scoreboard',format:'30 sec Reel + score graphic',channel:'Facebook · Instagram · X',cta:'Comment on the biggest hit',owner:'Steven',pillar:'Boomski'},
- {day:'Tuesday',title:'New arrivals and collector education',format:'5 photo carousel + 30 sec explainer',channel:'Facebook · Instagram · TikTok',cta:'Browse the featured collection',owner:'Steven + product lead',pillar:'Product'},
- {day:'Wednesday',title:'Meet the team / new store progress',format:'30 sec vertical + Stories',channel:'Facebook · Instagram · Snapchat',cta:'Get opening updates',owner:'Photographer + Steven',pillar:'Store'},
- {day:'Thursday',title:'One Boomski moment worth replaying',format:'15 sec and 30 sec vertical',channel:'Facebook · Instagram · TikTok · Snapchat',cta:'See the next break schedule',owner:'Breaker + Steven',pillar:'Boomski'},
- {day:'Friday',title:'Weekend releases + email digest',format:'Product photos + email',channel:'Facebook · Instagram · X · Email',cta:'Plan your visit / shop available stock',owner:'Steven',pillar:'Product'},
- {day:'Saturday',title:'Northside Locks: three guys, three picks',format:'45–60 sec group cut + 3 individual 15 sec cuts',channel:'Facebook · Instagram · TikTok · X · Snapchat',cta:'Who has the best pick?',owner:'Three hosts + Steven',pillar:'Picks'},
- {day:'Sunday',title:'Last call, community replies + Stories',format:'15 sec reminder before kickoff',channel:'Instagram · Facebook · Snapchat · X',cta:'Join the conversation',owner:'Steven',pillar:'Community'}
-];
 export const ROADMAP = [
  ['Now','Launch control','Budget model, saved campaign settings, weekly content plan, UTM links, uploaded assets, timestamped transcript matching, manual clip review, editing exports and manual performance entry.'],
  ['Next · 1–2 development weeks','Automatic video processing','Connect a timestamped speech provider and a separate FFmpeg worker. Add resumable large uploads, job progress, preview renders, subtitles, thumbnails and approved export bundles. Estimate depends on access and sample footage.'],
