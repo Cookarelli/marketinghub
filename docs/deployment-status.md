@@ -8,7 +8,18 @@
 - Supabase project `sjbjotfzsnaolecxklxr` has the schema and private bucket. Seven approved staff roster entries were provisioned, including one administrator. Staff addresses are absent from source control.
 - Supabase security advisor reported no errors or warnings. One informational finding is expected: the private roster has RLS with no direct-access policy, and is only accessed through checked private functions.
 
-## Deployment created; remote verification blocked
+## Live deployment verified; staff login pending
+
+- Live Hub: https://marketinghub-7vl1.vercel.app
+- Vercel project: `marketinghub-7vl1` under `steves-projects-e37a4ef4`.
+- GitHub reported a successful Vercel build for source commit `d8c7e69297846395580d824e5d3859b7f30647ac`; deployment inspector: https://vercel.com/steves-projects-e37a4ef4/marketinghub-7vl1/ATmdPXiK3u4W95JCLN7bqLMVQ1P7
+- After the administrator added both public Supabase configuration variables and redeployed, the served login bundle contains the expected project URL and a publishable key.
+- Direct unauthenticated HTTP checks confirm `/` redirects to `/login`, the login page returns 200, and `/api/records` returns 401 with a sign-in message. The previous setup-required 503 is resolved.
+- These checks do not verify a signed-in session or writes. Supabase still has zero Auth users and seven active roster entries.
+
+The Vercel connector still returns 403 for the team. Public HTTP responses and GitHub's deployment status provided the evidence above; project environment settings and build logs remain inaccessible through that connector.
+
+## Earlier preview
 
 Vercel accepted a **preview** deployment:
 
@@ -17,9 +28,9 @@ Vercel accepted a **preview** deployment:
 - Deployment: `dpl_2msNxWAHNAqCVoPTuoZy3qS7EEHz`
 - Scope: `steves-projects-e37a4ef4` (`team_iPL9ti94DMgRhfyzvbgjzZdG`)
 
-The creation response was INITIALIZING. Follow-up status and preview-access requests received 403, and a fresh inspection after reconnection confirmed the same authorization blocker: the connected Vercel account is not authorized for that scope. **A successful live build has not been verified.** No production deployment was requested.
+The creation response was INITIALIZING. Follow-up status and preview-access requests received 403. This earlier preview is separate from the current `marketinghub-7vl1` deployment above; its final status was not verified.
 
-The preview upload included an untracked environment file with the Supabase URL and public publishable key. Future repository-based deployments need those two variables configured in Vercel project settings; the keys are not included in this archive.
+The earlier preview upload included an untracked environment file with the Supabase URL and public publishable key. The current repository-based deployment uses project environment variables. No environment values are tracked in the repository.
 
 ## GitHub source repository
 
@@ -29,11 +40,10 @@ GitHub was reconnected and repository write access was verified. The prepared ap
 
 ## Next activation steps
 
-1. Vercel was reconnected and its tools are now available. A fresh team listing returns no teams, and deployment/project inspection still returns 403 for `steves-projects-e37a4ef4`. Resolve the connected account or team authorization, then inspect the existing deployment before creating another.
-2. Connect the GitHub repository to the Vercel project for future deploys and configure both Supabase environment variables.
-3. Create individual Supabase Auth accounts for the approved staff. A fresh database check confirms **zero Auth users** and seven active roster entries; roster approval alone is not a login. Complete email verification and set individual passwords. No invitation messages were sent.
-4. Test real sign-in, saving after reload, asset upload/download, publisher refresh, review, and calendar handoff on the protected preview.
-5. Review/export records and media from the existing Hub before importing them into the new shared workspace. Existing production records and uploads were not changed or transferred.
-6. Enable a scheduled collection job only after the staff-triggered collection flow is verified. This deployment contains no active cron schedule.
+1. Create the administrator's individual Supabase Auth account, then the remaining approved staff accounts. A fresh database check confirms **zero Auth users** and seven active roster entries; roster approval alone is not a login. Confirm approved email identities and set individual passwords through Supabase Auth. No invitation messages were sent.
+2. Test real sign-in, saving after reload, asset upload/download, publisher refresh, review, and calendar handoff on the new deployment before team rollout.
+3. Resolve Vercel connector team authorization for future access to settings and logs.
+4. Review/export records and media from the existing Hub before importing them into the new shared workspace. Existing production records and uploads were not changed or transferred.
+5. Enable a scheduled collection job only after the staff-triggered collection flow is verified. This deployment contains no active cron schedule.
 
 The old live Hub remains unchanged. AI generation, Shopify synchronization, automatic transcription and external publishing remain unconnected.
