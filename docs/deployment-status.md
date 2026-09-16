@@ -17,7 +17,7 @@ Vercel accepted a **preview** deployment:
 - Deployment: `dpl_2msNxWAHNAqCVoPTuoZy3qS7EEHz`
 - Scope: `steves-projects-e37a4ef4` (`team_iPL9ti94DMgRhfyzvbgjzZdG`)
 
-The creation response was INITIALIZING. Follow-up status and preview-access requests received 403: the connected Vercel account is not authorized for that scope. **A successful live build has not been verified.** No production deployment was requested.
+The creation response was INITIALIZING. Follow-up status and preview-access requests received 403, and a fresh inspection after reconnection confirmed the same authorization blocker: the connected Vercel account is not authorized for that scope. **A successful live build has not been verified.** No production deployment was requested.
 
 The preview upload included an untracked environment file with the Supabase URL and public publishable key. Future repository-based deployments need those two variables configured in Vercel project settings; the keys are not included in this archive.
 
@@ -29,9 +29,9 @@ GitHub was reconnected and repository write access was verified. The prepared ap
 
 ## Next activation steps
 
-1. Vercel was reconnected. Its deployment tools have not yet become available in the active session. Inspect the existing deployment under the scope above before creating another.
+1. Vercel was reconnected and its tools are now available. A fresh team listing returns no teams, and deployment/project inspection still returns 403 for `steves-projects-e37a4ef4`. Resolve the connected account or team authorization, then inspect the existing deployment before creating another.
 2. Connect the GitHub repository to the Vercel project for future deploys and configure both Supabase environment variables.
-3. Create individual Supabase Auth accounts for the approved staff. There are currently **zero Auth users**; roster approval alone is not a login. Complete email verification and set individual passwords. No invitation messages were sent.
+3. Create individual Supabase Auth accounts for the approved staff. A fresh database check confirms **zero Auth users** and seven active roster entries; roster approval alone is not a login. Complete email verification and set individual passwords. No invitation messages were sent.
 4. Test real sign-in, saving after reload, asset upload/download, publisher refresh, review, and calendar handoff on the protected preview.
 5. Review/export records and media from the existing Hub before importing them into the new shared workspace. Existing production records and uploads were not changed or transferred.
 6. Enable a scheduled collection job only after the staff-triggered collection flow is verified. This deployment contains no active cron schedule.
