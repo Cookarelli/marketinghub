@@ -322,3 +322,13 @@ html.dark .timeline-compact{border-color:var(--border)}
 html.dark .auth-shell input{border-color:var(--input)}
 html.dark .auth-shell button{background:var(--primary);color:var(--primary-foreground)}
 html.dark :is(button,a,input,select,textarea,summary):focus-visible{outline-color:var(--ring)}
+
+.campaign-fields { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 1rem; }
+.campaign-fields fieldset { border: 1px solid var(--border); padding: 1rem; }
+.campaign-fields input[type="checkbox"] { width: 1.25rem; height: 1.25rem; accent-color: currentColor; }
+.campaign-fields section { display: grid; gap: 1rem; }
+
+.campaign-summary { width: 100%; border-collapse: collapse; text-align: left; }
+.campaign-summary caption { text-align: left; font-weight: 700; padding: .5rem 0; }
+.campaign-summary th, .campaign-summary td { padding: .75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+.check-field{display:flex;align-items:flex-start;gap:.75rem;margin:.75rem 0;font-size:1rem;line-height:1.5;cursor:pointer}.check-field input{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.15rem}.production-outstanding ul{list-style:disc;padding-left:1.25rem}.check-field:focus-within{outline:2px solid var(--ring);outline-offset:4px}

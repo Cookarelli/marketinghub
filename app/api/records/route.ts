@@ -1,3 +1,4 @@
+import {postSchema} from '@/lib/calendar-validation';
 import {listRecords,identity,saveRecord,apiError} from '@/lib/storage';
 import {z} from 'zod';
 const kinds=z.enum(['plan','post','link','metrics','clipjob']);
@@ -6,7 +7,7 @@ const source=z.enum(['facebook','instagram','x','tiktok','snapchat','google','em
 const n=z.number().finite().nonnegative();
 const validators={
  plan:z.object({budget:z.union([z.literal(1000),z.literal(2000),z.literal(3000),z.literal(5000)]),launchDate:z.string(),address:z.string().max(500),campaign:z.string().min(1).max(150),aov:z.number().positive(),margin:z.number().positive().max(100)}),
- post:z.object({title:z.string().min(1).max(500),date:z.string().min(10),timezone:z.literal('America/Chicago'),source:z.string(),caption:z.string().max(10000),status:z.enum(['draft','review','approved','published']),category:z.enum(['Topical','Release','Brand / educational']).optional(),recurrence:z.literal('weekly-tuesday').optional(),references:z.array(z.string().url().refine(u=>u.startsWith('https://'))).max(10).optional()}),
+ post:postSchema,
  link:z.object({name:z.string().max(500),url:z.string().url().refine(u=>u.startsWith('https://')),source:z.string(),medium:z.string(),campaign:z.string(),content:z.string()}),
  metrics:z.object({date:z.string().regex(/^\d{4}-\d{2}-\d{2}$/),source,campaign:z.string().min(1).max(150),spend:n,impressions:n.int(),clicks:n.int(),leads:n.int(),onlineOrders:n.int(),onlineRevenue:n,posOrders:n.int(),posRevenue:n}).passthrough(),
  clipjob:z.object({name:z.string().max(500),assetId:z.string(),transcript:z.string().max(1000000),signals:z.string().max(2000),before:n,after:z.number().positive(),duration:z.number().positive(),clips:z.array(z.object({id:z.string(),start:n,end:z.number().positive(),signal:z.string(),text:z.string(),approved:z.boolean(),caption:z.string(),triggerTime:n.optional()})).max(1000)}).refine(j=>j.clips.every(c=>c.start<c.end&&c.end<=j.duration))

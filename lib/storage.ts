@@ -30,6 +30,7 @@ export async function saveRecord(workspace:string,kind:string,id:string,data:unk
   if (error) throw error;
 }
 export function apiError(error:unknown) {
+  if (error && typeof error === 'object' && 'code' in error && error.code === '22023' && 'message' in error) return Response.json({error:String(error.message)},{status:400,headers:{'Cache-Control':'no-store'}});
   const message = error instanceof Error ? error.message : '';
   const status = message==='Unauthorized'?401:message==='Forbidden'?403:503;
   const text = status===401?'Please sign in to open the team workspace.':status===403?'Your account does not have access to this action.':message==='Setup required'?'Team workspace setup is not complete.':'Could not reach the saved workspace. Your entries remain here; please retry.';

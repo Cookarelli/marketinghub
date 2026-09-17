@@ -1,3 +1,5 @@
+import type {CampaignVerification} from './consignment-review';
+import type {ConsignmentMeta} from './consignment';
 export type CalendarPostData = {
   title: string;
   date: string;
@@ -5,7 +7,15 @@ export type CalendarPostData = {
   source: string;
   caption: string;
   status: string;
-  category?: 'Topical' | 'Release' | 'Brand / educational';
+  category?: 'Topical' | 'Release' | 'Brand / educational' | 'Consignment';
+  owner?: string;
+  platforms?: string[];
+  tasks?: string[];
+  completedTasks?: string[];
+  staffPicks?: string;
+  verification?: CampaignVerification;
+  assets?: string[];
+  consignment?: ConsignmentMeta;
   recurrence?: 'weekly-tuesday';
   references?: string[];
 };

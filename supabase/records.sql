@@ -1,7 +1,23 @@
 create function private.save_record(p_kind text,p_id text,p_data jsonb) returns void
 language plpgsql security definer set search_path='' as $$
-declare w text:=private.require_staff(); pending jsonb;
+declare w text:=private.require_staff(); pending jsonb; existing jsonb; campaign jsonb;
 begin
+ perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(w,0));
+ if p_kind='post' then
+  select data into existing from public.marketing_records where workspace_id=w and kind='post' and id=p_id;
+  if existing->'consignment' is distinct from p_data->'consignment' then
+   raise exception using errcode='22023',message='Manage campaign membership through the campaign preview.';
+  end if;
+  if p_data ? 'consignment' then
+   perform private.validate_consignment_post(p_data);
+   select data into campaign from public.marketing_records where workspace_id=w and kind='campaign' and id=p_data->'consignment'->>'campaignId';
+   perform private.assert_consignment_approval(p_data,campaign);
+  end if;
+  if p_data ? 'consignment' and (p_data->>'category' is distinct from 'Consignment' or p_data ? 'recurrence'
+   or not exists(select 1 from private.staff_access where org_id=w and id=p_data->>'owner' and active)) then
+   raise exception using errcode='22023',message='Check campaign category and assigned staff member.';
+  end if;
+ end if;
  if p_kind not in ('plan','post','link','metrics','clipjob','upload','asset') or length(p_id) not between 1 and 180 then
   raise exception using errcode='22023',message='Invalid record.';
  end if;

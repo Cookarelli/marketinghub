@@ -41,3 +41,7 @@ Import this repository into Vercel as a Next.js project and set the two environm
 The existing Hub is a separate deployment. Its records and uploaded media have not been imported into this new database. Export and review that data before migration; do not merge individual workspaces into shared data without checking the contents.
 
 Automatic daily collection is not enabled in this migration. Staff-triggered collection is available. AI drafting, Shopify stock sync, transcription, external social publishing, and in-app video rendering are not connected. The local video-rendering helper remains available in Content studio.
+
+## Consignment campaigns
+
+The Marketing Calendar includes reusable five-stage consignment campaigns, schedule previews, conflict warnings, and safe rescheduling. See [workflow and deployment instructions](docs/consignment-campaigns.md). Apply the consignment migration before deploying the feature.
