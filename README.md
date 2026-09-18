@@ -28,6 +28,10 @@ Provision the approved staff roster in `private.staff_access` through a trusted 
 
 Authorization joins the verified Auth email to the current private roster on every request. Client-editable user metadata is never authoritative. Exposed tables have row-level security; application writes go through named transaction functions with checked membership, fixed workspace scope, and database-assigned actors. History tables cannot be changed by the application role. Staff can view shared assets; the private Storage bucket permits scoped uploads and short-lived downloads.
 
+## Password recovery
+
+The login page includes **Forgot password?**. See [password recovery setup and verification](docs/password-recovery.md) for the required Supabase redirect URL, email delivery configuration, and recovery checks.
+
 ## Content Radar
 
 Open Content Radar, add the starter sources, then use **Refresh sources** or add a link manually. Publisher content is unverified until reviewed. Collection preserves publisher snapshots, deduplicates URLs, skips overlapping jobs, and stops stale workers after settings change. Network fetching is restricted to the reviewed publisher host list; redirects, response size, and collection time are bounded.
