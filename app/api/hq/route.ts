@@ -34,7 +34,7 @@ export async function POST(request:Request) {
     const parsed=hqCommand.safeParse(input);
     if(!parsed.success) return Response.json({error:parsed.error.issues[0]?.message||'Check the fields.'},{status:400,headers});
     const {action,...payload}=parsed.data;
-    const {data,error}=await (await db()).rpc(['reschedule','reminders','notification-read','spend','spend-reverse','comment'].includes(action)?'hub_hq_operations':'hub_hq',{p_action:action,p_payload:payload});
+    const {data,error}=await (await db()).rpc(action==='adopt-editorial'?'hub_hq_editorial':['reschedule','reminders','notification-read','spend','spend-reverse','comment'].includes(action)?'hub_hq_operations':'hub_hq',action==='adopt-editorial'?{p_payload:payload}:{p_action:action,p_payload:payload});
     if(error) {
       if(['42501','40001','22023','23514'].includes(error.code)) return Response.json({error:error.message},{status:error.code==='42501'?403:error.code==='40001'?409:400,headers});
       throw error;

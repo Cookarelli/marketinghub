@@ -479,3 +479,11 @@ html.dark :is(button,a,input,select,textarea,summary):focus-visible{outline-colo
 .hq-inbox button { white-space: normal; }
 .hq-filter-grid select, .hq-form select { min-height: 44px; }
 @media(max-width: 640px) { .hq-masthead .header-meta { flex-wrap: wrap; gap: .5rem; } .hq-inbox { position: fixed; top: 8rem; left: 1rem; right: 1rem; width: auto; max-height: calc(100dvh - 14rem); } }
+
+/* Keep header controls readable in both themes and the shared workflow compact. */
+.hq-notifications { color: var(--foreground); }
+.hq-notifications > button { color: var(--foreground); background: var(--card); }
+.hq-inbox { color: var(--foreground); }
+.hq-page-heading { margin-bottom: 0; }
+.hq-content .main-tabs.hq-secondary { grid-template-columns: repeat(4,minmax(0,1fr)); }
+@media(max-width:640px) { .hq-content .main-tabs.hq-secondary { grid-template-columns: repeat(2,minmax(0,1fr)); } }

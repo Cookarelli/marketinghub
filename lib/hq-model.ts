@@ -41,7 +41,7 @@ export type PublishingPackage={finalAssets:string[];finalLinks:string[];caption:
 export type Approval = {by:string;at:string;projectVersion:number|null;budgetVersion:number|null;reviewedVersion?:number;approvedVersion?:number;contentVersion?:number;comment?:string;package?:PublishingPackage};
 export type Publication = {status:'planned'|'scheduled'|'published';scheduledFor?:string;scheduledBy?:string;scheduledAt?:string;publishedAt?:string;liveUrl?:string;unavailableReason?:string;recordedBy?:string;recordedAt?:string;approval?:Approval};
 export type Project = ProjectInput & Metadata & {budget:Budget|null;legacyCampaignId?:string};
-export type Deliverable = Omit<DeliverableInput,'effort'|'evidence'> & Metadata & {effort:DeliverableInput['effort']|null;evidence:Pick<CalendarPostData,'completedTasks'|'staffPicks'|'verification'>;status:keyof typeof productionStatuses;approval:Approval|null;publications:Record<string,Publication>;legacyPostId?:string;legacyPost?:CalendarPostData;contentVersion?:number;submission?:{by:string;to:string;at:string;contentVersion:number;recordVersion:number}|null;review?:{by:string;at:string;decision:'approve'|'changes';comment:string;reviewedVersion:number}};
+export type Deliverable = Omit<DeliverableInput,'effort'|'evidence'> & Metadata & {effort:DeliverableInput['effort']|null;evidence:Pick<CalendarPostData,'completedTasks'|'staffPicks'|'verification'>;status:keyof typeof productionStatuses;approval:Approval|null;publications:Record<string,Publication>;legacyPostId?:string;legacyPost?:CalendarPostData;legacyEditorialId?:string;editorialSource?:{version:number;data:{state:string;facebook:string;instagram:string;cta:string;permission:string;permissionEvidence:string;attribution:string;references:string[]}};contentVersion?:number;submission?:{by:string;to:string;at:string;contentVersion:number;recordVersion:number}|null;review?:{by:string;at:string;decision:'approve'|'changes';comment:string;reviewedVersion:number}};
 export type HqRecord<T> = {id:string;data:T};
 export type Staff = {id:string;name:string;budgetApprover:boolean;requestCoordinator:boolean};
 export type HqContext = {staffId:string;admin:boolean;canApproveBudget:boolean;canCoordinate:boolean;staff:Staff[]};
@@ -68,6 +68,7 @@ export function deliverableMissing(d:Deliverable,p?:Project) {
   if(d.projectId) {if(!p?.owner) issues.push('Project owner');if(p?.status!=='active') issues.push('Active project');} else if(!d.approver) issues.push('Standalone approver');
   if(d.requiresFinalFile&&!finalMaterials(d).finalAssets.length&&!finalMaterials(d).finalLinks.length) issues.push('Attach and mark a final file or final external link');
   if(d.publishing) {if(!d.format) issues.push('Format');if(!d.platforms.length) issues.push('Destination platforms');if(d.requiresCaption&&!d.caption.trim()) issues.push('Caption');if(!d.publishAt) issues.push('Intended publication time');if(!d.publisher) issues.push('Assigned publisher');if(d.requiresCaption===undefined||d.requiresFinalFile===undefined) issues.push('Choose output requirements');if(!d.requiresCaption&&!d.requiresFinalFile&&!d.destinationUrl) issues.push('A final file, caption or destination link');}
+  if(d.editorialSource&&d.editorialSource.data.state!=='Approved')issues.push('Current editorial source approval');
   if(d.promotionMode==='paid'&&(!p?.budget||!d.promotionChannel||!d.promotionCents)) issues.push('Approved project promotion allocation');
   if(d.blocked) issues.push('Resolve: '+d.blockedReason);
   if(d.status==='ready'&&!approvalCurrent(d,p)) issues.push('Renew owner approval after project changes');
@@ -96,5 +97,6 @@ export const hqCommand = z.discriminatedUnion('action',[
   z.object({action:z.literal('notification-read'),id:z.string().uuid(),read:z.boolean()}).strict(),
   z.object({action:z.literal('spend'),id:z.string().uuid(),projectId:id,category:z.enum(['advertising','creative']),amountCents:z.number().int().positive().max(999999999999),spentOn:z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(v=>{const d=new Date(v+'T12:00:00Z');return Number.isFinite(d.getTime())&&d.toISOString().slice(0,10)===v;},'Choose a valid spending date.'),channel:z.string().trim().max(80),note:z.string().trim().min(1).max(2000)}).strict(),
   z.object({action:z.literal('spend-reverse'),id:z.string().uuid(),projectId:id,reverses:z.string().uuid(),note:z.string().trim().min(1).max(2000)}).strict(),
+  z.object({action:z.literal('adopt-editorial'),id,owner:staffId,approver:staffId,effort:z.enum(['quick','standard','premium'])}).strict(),
   z.object({action:z.literal('adopt-campaign'),id}).strict(),z.object({action:z.literal('adopt-post'),id}).strict(),
 ]);

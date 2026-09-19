@@ -30,7 +30,7 @@ export function HqRequests({id}:{id?:string}) {
  <div className="button-row"><Button onClick={()=>setCreating(true)}>New request</Button></div>
  {creating&&<section className="panel"><RequestForm assets={assets} busy={busy} onSave={save} onCancel={()=>setCreating(false)}/></section>}
  <Choice label="Request status" value={filter} onChange={setFilter} options={{all:'All requests',...requestStatuses}}/>
- <ul className="hq-deliverables">{requests.filter(r=>filter==='all'||r.data.status===filter).map(r=><li key={r.id}><div><Link href={'/requests/'+r.id}>{r.data.title}</Link><p className="muted">{name(r.data.requester)} · Requested: {dateLabel(r.data.requestedDeadline)}</p></div><span className="tag">{requestStatuses[r.data.status]}</span></li>)}</ul>{!requests.length&&<p className="notice">No general requests yet. Start with what you need and what it is for.</p>}
+ <ul className="hq-deliverables">{requests.filter(r=>filter==='all'||r.data.status===filter).map(r=><li key={r.id}><div><Link href={'/requests/'+r.id}>{r.data.title}</Link><p className="muted">{name(r.data.requester)} · Requested: {dateLabel(r.data.requestedDeadline)}</p></div><span className="tag">{requestStatuses[r.data.status]}</span></li>)}</ul>{!requests.filter(r=>filter==='all'||r.data.status===filter).length&&<p className="notice">{requests.length?'No requests match this status. Choose All requests to see the others.':'No general requests yet. Start with what you need and what it is for.'}</p>}
  </>}</div>;
 }
 function RequestForm({record,assets,busy,onSave,onCancel}:{record?:HqRecord<HqRequest>;assets:Asset[];busy:boolean;onSave:(command:Record<string,unknown>)=>Promise<void>;onCancel?:()=>void}) {
