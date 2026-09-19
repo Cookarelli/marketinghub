@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 
 import {ConsignmentReview, OutstandingTasks} from '@/components/consignment-review';
 import {approvalIssues} from '@/lib/consignment-review';
@@ -58,7 +59,7 @@ export function ContentCalendar({posts, campaigns, busy, loading, onSave, onSave
         {p.references?.length ? <ul className="calendar-references">{p.references.map((url, i) => <li key={url}><a href={url} target="_blank" rel="noreferrer">Source {i + 1}<span className="sr-only"> for {p.title}</span></a></li>)}</ul> : null}
       </details> : null}
       {p.consignment && <OutstandingTasks data={p} campaign={campaign}/>}
-      <div className="calendar-card-actions">{radar ? <Button variant="outline" asChild><a href="/requests">Open editorial review</a></Button> : <>
+      <div className="calendar-card-actions">{radar ? <Button variant="outline" asChild><Link href="/requests?view=editorial">Open editorial review</Link></Button> : <>
         <Button variant="outline" disabled={busy} onClick={() => openDraft(post)}><Pencil size={18}/>{p.recurrence ? 'Edit series' : 'Edit draft'}</Button>
         {p.recurrence ? <Button variant="outline" disabled={busy} onClick={() => openDraft(post, true)}><Plus size={18}/>Create next draft</Button> :
           <label className="calendar-status"><span className="sr-only">Status for {p.title}</span><select value={p.status} disabled={busy} onChange={e => void onSave(post.id, {...p, status: e.target.value})}>

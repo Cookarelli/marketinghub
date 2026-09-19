@@ -13,7 +13,7 @@ export async function GET(request:Request) {
       return Response.json(data,{headers});
     }
     const offset=Number(url.searchParams.get('offset')||0);
-    if(!['project','deliverable'].includes(kind||'') || !id || !Number.isSafeInteger(offset) || offset<0) return Response.json({error:'Choose a record and valid history page.'},{status:400,headers});
+    if(!['project','deliverable','request'].includes(kind||'') || !id || !Number.isSafeInteger(offset) || offset<0) return Response.json({error:'Choose a record and valid history page.'},{status:400,headers});
     const [{data:comments,error:commentsError},{data:activity,error:activityError}]=await Promise.all([
       client.from('hq_comments').select('*').eq('org_id',workspace).eq('kind',kind!).eq('record_id',id).order('created_at',{ascending:false}).order('id').range(offset,offset+24),
       kind==='project'

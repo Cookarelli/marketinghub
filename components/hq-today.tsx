@@ -27,7 +27,7 @@ export function HqToday({posts, loading, failed}: {posts: CalendarPost[]; loadin
         {work.scheduled.length ? <ul className="hq-work-list">{work.scheduled.map(post => <li key={post.id}><time dateTime={post.data.date}>{calendarTime(post.data.date)}</time><div><Link href="/calendar">{post.data.title}</Link><p className="muted">{post.data.platforms?.join(', ') || (post.data.source === 'tbd' ? 'Platform to confirm' : post.data.source)}</p></div><span className="tag">{post.data.status}</span></li>)}</ul> : <div className="hq-empty"><h3>No dated posts scheduled today</h3><p>Open the calendar to prepare a draft or use a weekly series.</p><Link href="/calendar">Plan the next post <ArrowUpRight size={16} aria-hidden="true"/></Link></div>}
       </section>
       <section className="panel"><div className="section-title"><h2>Needs attention</h2></div>
-        <Link className="hq-action-row" href="/requests"><div><strong>Content requests & review</strong><p className="muted">Open saved ideas, captions and review requests.</p></div><ArrowUpRight aria-hidden="true"/></Link>
+        <Link className="hq-action-row" href="/requests"><div><strong>Requests & review</strong><p className="muted">Ask for work, see decisions and open editorial review.</p></div><ArrowUpRight aria-hidden="true"/></Link>
         <Link className="hq-action-row" href="/calendar"><div><strong>{work.overdue.length} past-due drafts</strong><p className="muted">Review dates before approving or publishing.</p></div><ArrowUpRight aria-hidden="true"/></Link>
         <Link className="hq-action-row" href="/assets"><div><strong>Prepare the next asset</strong><p className="muted">Upload media or continue a saved editing job.</p></div><ArrowUpRight aria-hidden="true"/></Link>
       </section>

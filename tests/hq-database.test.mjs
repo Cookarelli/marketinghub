@@ -11,8 +11,10 @@ const actors={joey:'00000000-0000-4000-8000-000000000001',owner:'00000000-0000-4
 async function actor(id){await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[actors[id]||'']);await db.exec('set role authenticated');}
 async function hq(action,payload={}) {return (await db.query('select public.hub_hq($1,$2::jsonb) as result',[action,JSON.stringify(payload)])).rows[0].result;}
 async function record(kind,id){return (await db.query('select data from public.marketing_records where kind=$1 and id=$2',[kind,id])).rows[0]?.data;}
-async function saveProject(id,data,version=0){return (await hq('save-project',{id,version,data})).data;}
-async function saveDeliverable(id,data,version=0){return (await hq('save-deliverable',{id,version,data})).data;}
+// This suite verifies the immutable first HQ migration; later fields are tested in hq-workflow.test.mjs.
+const historicalData=data=>Object.fromEntries(Object.entries(data).filter(([k])=>!["assetRoles","linkRoles","publisher","requiresFinalFile","requiresCaption","promotionMode","promotionChannel","promotionCents"].includes(k)));
+async function saveProject(id,data,version=0){data=historicalData(data);return (await hq('save-project',{id,version,data})).data;}
+async function saveDeliverable(id,data,version=0){data=historicalData(data);return (await hq('save-deliverable',{id,version,data})).data;}
 async function production(id,status){return (await hq('production',{id,version:(await record('deliverable',id)).version,status})).data;}
 async function publish(id,platform,status,extra={}) {return (await hq('publication',{id,version:(await record('deliverable',id)).version,platform,status,confirmed:true,time:'2026-01-12T14:00',url:'https://example.test/live',unavailableReason:'',...extra})).data;}
 const project={...blankProject,title:'Fictional launch',brief:'Prepare the launch',owner:'owner',members:['maker'],status:'active'};
