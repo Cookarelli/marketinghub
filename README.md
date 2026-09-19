@@ -49,3 +49,7 @@ Automatic daily collection is not enabled in this migration. Staff-triggered col
 ## Consignment campaigns
 
 The Marketing Calendar includes reusable five-stage consignment campaigns, schedule previews, conflict warnings, and safe rescheduling. See [workflow and deployment instructions](docs/consignment-campaigns.md). Apply the consignment migration before deploying the feature.
+
+## Northside HQ projects and deliverables
+
+The shared project/production workflow extends the existing organization record store. Apply the additive HQ migration after the existing consignment migrations before deploying this version. See [the HQ inventory, permissions, legacy mappings and rollout notes](docs/northside-hq.md). No legacy records are automatically adopted; owners or administrators explicitly move campaigns and eligible calendar posts into HQ while preserving their original history.

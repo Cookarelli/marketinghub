@@ -432,3 +432,28 @@ html.dark :is(button,a,input,select,textarea,summary):focus-visible{outline-colo
 .hq-more-views .button-row { margin: 0; padding: 8px 16px 16px; }
 .hq-shell :is(.studio-grid,.launch-grid,.two-fields,.form-grid,.hq-project-grid)>* { min-width: 0; }
 .hq-shell input[type=file] { width: 100%; min-width: 0; }
+/* Shared HQ records use the existing color tokens and responsive shell. */
+.hq-workspace { display: grid; gap: 1.5rem; min-width: 0; }
+.hq-workspace h2, .hq-workspace h3 { overflow-wrap: anywhere; }
+.hq-form { display: grid; gap: 1rem; margin: 1rem 0; min-width: 0; }
+.hq-form fieldset { min-width: 0; }
+.hq-form input:not([type=checkbox]), .hq-form select, .hq-form button, .hq-workspace select { min-height: 44px; }
+.hq-checks { display: flex; flex-wrap: wrap; gap: .5rem 1rem; }
+.hq-checks legend { margin-bottom: .5rem; font-weight: 600; }
+.hq-checks label { display: flex; align-items: center; gap: .6rem; min-height: 44px; overflow-wrap: anywhere; }
+.hq-checks input, .hq-form input[type=checkbox] { width: 20px; height: 20px; flex-shrink: 0; }
+.hq-details summary { cursor: pointer; font-weight: 600; min-height: 44px; padding: .7rem 0; }
+.hq-deliverables, .hq-discussion { list-style: none; margin: 1rem 0; padding: 0; }
+.hq-deliverables li { display: flex; justify-content: space-between; align-items: start; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
+.hq-deliverables li > div { min-width: 0; }
+.hq-deliverables li a { font-weight: 600; }
+.hq-discussion li { padding: 1rem 0; border-bottom: 1px solid var(--border); }
+.hq-discussion time { display: block; font-size: .85rem; color: var(--muted-foreground); }
+.hq-preserve-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.hq-resource-links { display: grid; gap: .7rem; overflow-wrap: anywhere; }
+.hq-publication { padding: 1rem; border: 1px solid var(--border); border-radius: .75rem; min-width: 0; }
+.hq-publication h3 { text-transform: capitalize; }
+.hq-allocation { display: grid; grid-template-columns: 1fr 1fr auto; align-items: end; gap: 1rem; }
+.hq-budget { font-size: 2rem; font-weight: 600; }
+.hq-save-notice { padding: .7rem 1rem; border: 1px solid var(--border); border-radius: .5rem; }
+@media(max-width:700px) { .hq-deliverables li { flex-direction: column; gap: .5rem; } .hq-allocation { grid-template-columns: 1fr; } .hq-form input[type=datetime-local] { width: 100%; min-width: 0; } }
