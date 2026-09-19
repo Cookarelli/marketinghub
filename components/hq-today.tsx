@@ -1,36 +1,38 @@
 'use client';
-
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import Link from 'next/link';
-import {ArrowUpRight, CalendarDays, ClipboardCheck, Send} from 'lucide-react';
+import {Button} from '@/components/ui/button';
+import {todayDashboard,nextAction,personName,type ScheduleRow} from '@/lib/hq-operations';
+import {productionStatuses,type Deliverable,type HqRecord,type Project,type Staff} from '@/lib/hq-model';
+import {calendarDay,calendarTime,type CalendarPost} from '@/lib/content-calendar';
 import {todayWork} from '@/lib/hq-today';
-import {calendarDay, calendarTime, type CalendarPost} from '@/lib/content-calendar';
-
-export function HqToday({posts, loading, failed}: {posts: CalendarPost[]; loading: boolean; failed: boolean}) {
-  const [now, setNow] = useState<number | null>(null);
-  useEffect(() => {
-    const update = () => setNow(Date.now());
-    update();
-    const timer = window.setInterval(update, 60000);
-    return () => window.clearInterval(timer);
-  }, []);
-  if (failed) return <p className="panel">Today’s work is unavailable until the workspace reconnects. Use Retry above to load your saved records.</p>;
-  if (loading || now === null) return <p className="panel" role="status">Preparing today’s work…</p>;
-  const work = todayWork(posts, now);
-  return <>
-    <div className="hq-today-intro"><p className="eyebrow">{calendarDay(work.day)}</p><h2>Keep the work moving.</h2><p className="muted">Review what’s scheduled, finish production and publish through your usual channels.</p></div>
-    <div className="hq-stats">
-      {[{label: 'On today’s calendar', count: work.scheduled.length, icon: CalendarDays}, {label: 'Calendar posts in review', count: work.review.length, icon: ClipboardCheck}, {label: 'Approved posts due', count: work.ready.length, icon: Send}].map(({label, count, icon: Icon}) => <Link className="hq-stat" href="/calendar" key={label}><Icon size={24} aria-hidden="true"/><strong>{count}</strong><span>{label}</span><ArrowUpRight size={18} aria-hidden="true"/></Link>)}
-    </div>
-    <div className="hq-columns">
-      <section className="panel"><div className="section-title"><h2>Today’s schedule</h2><Link href="/calendar">Open calendar</Link></div>
-        {work.scheduled.length ? <ul className="hq-work-list">{work.scheduled.map(post => <li key={post.id}><time dateTime={post.data.date}>{calendarTime(post.data.date)}</time><div><Link href="/calendar">{post.data.title}</Link><p className="muted">{post.data.platforms?.join(', ') || (post.data.source === 'tbd' ? 'Platform to confirm' : post.data.source)}</p></div><span className="tag">{post.data.status}</span></li>)}</ul> : <div className="hq-empty"><h3>No dated posts scheduled today</h3><p>Open the calendar to prepare a draft or use a weekly series.</p><Link href="/calendar">Plan the next post <ArrowUpRight size={16} aria-hidden="true"/></Link></div>}
-      </section>
-      <section className="panel"><div className="section-title"><h2>Needs attention</h2></div>
-        <Link className="hq-action-row" href="/requests"><div><strong>Requests & review</strong><p className="muted">Ask for work, see decisions and open editorial review.</p></div><ArrowUpRight aria-hidden="true"/></Link>
-        <Link className="hq-action-row" href="/calendar"><div><strong>{work.overdue.length} past-due drafts</strong><p className="muted">Review dates before approving or publishing.</p></div><ArrowUpRight aria-hidden="true"/></Link>
-        <Link className="hq-action-row" href="/assets"><div><strong>Prepare the next asset</strong><p className="muted">Upload media or continue a saved editing job.</p></div><ArrowUpRight aria-hidden="true"/></Link>
-      </section>
-    </div>
-  </>;
+import {useHqClock} from '@/components/use-hq-clock';
+import {useHqContext} from '@/components/use-hq-context';
+export function HqToday({records,projects,posts,loading,failed}:{records:HqRecord<Deliverable>[];projects:HqRecord<Project>[];posts:CalendarPost[];loading:boolean;failed:boolean}){
+ const {context,error,reload}=useHqContext(),[view,setView]=useState<'mine'|'team'>('mine');const now=useHqClock();
+ if(failed)return <p className="panel" role="alert">Today is unavailable. Retry loading the saved workspace above.</p>;
+ if(error)return <div className="panel" role="alert">{error}<Button onClick={reload}>Retry Today</Button></div>;
+ if(loading||!context||now===null)return <p role="status">Preparing Today…</p>;
+ const data=todayDashboard(records,projects,context.staffId,now),legacy=todayWork(posts,now),staff=context.staff;
+ const work=(title:string,items:HqRecord<Deliverable>[],empty:string)=><WorkSection title={title} records={items} projects={projects} staff={staff} empty={empty}/>;
+ return <><p>{calendarDay(data.day)} · America/Chicago</p><div className="button-row" role="group" aria-label="Today view"><Button aria-pressed={view==='mine'} variant={view==='mine'?'default':'outline'} onClick={()=>setView('mine')}>My Work</Button><Button aria-pressed={view==='team'} variant={view==='team'?'default':'outline'} onClick={()=>setView('team')}>Team</Button></div>
+ {view==='mine'?<>
+ {work('My work due soon or overdue',data.dueSoon,'No assigned production deadlines in the next seven days or overdue. Open Projects to find your other work.')}
+ {work('Awaiting my approval',data.approvals,'No submitted work is waiting for your approval.')}
+ {work('Blocks requiring my action',data.myBlocks,'You are not currently responsible for resolving any blocks.')}
+ <PublishingSection title="My publishing assignments today" rows={data.myPublishing} staff={staff} empty="No publishing destinations are assigned to you today."/>
+ </>:<>
+ <PublishingSection title="Today and tomorrow’s publishing" rows={data.publishing} staff={staff} empty="No publication dates are planned for today or tomorrow."/>
+ <div className="hq-columns"><PublishingSection title="Ready to hand off" rows={data.ready} staff={staff} empty="No pending destinations have current approval in this two-day window."/><PublishingSection title="Unfinished publishing work" rows={data.unfinished} staff={staff} empty="No pending destinations need production or review in this two-day window."/></div>
+ {work('Overdue production',data.overdue,'No open production deadlines are overdue.')}
+ <PublishingSection title="Overdue publishing" rows={data.overduePublishing} staff={staff} empty="No pending publication times are overdue."/>
+ {work('Blocked work',data.blocked,'No open work is marked blocked.')}
+ <section className="panel"><h2>Projects approaching key dates</h2><p className="muted">Next seven days · projects with missing inputs</p>{data.missingProjects.length?<ul className="hq-deliverables">{data.missingProjects.map(p=><li key={p.id}><div><Link href={'/projects/'+p.id}>{p.data.title}</Link><p>{calendarDay(p.date)} · {calendarTime(p.date)} · {personName(p.data.owner,staff)}</p><ul>{p.missing.map((m,i)=><li key={i}>{m}</li>)}</ul></div></li>)}</ul>:<p>No approaching projects have missing inputs.</p>}</section>
+ {work('Unassigned work',data.unassigned,'Every open deliverable has an accountable owner and, where needed, a publisher.')}
+ {data.unassignedProjects.length>0&&<section className="panel"><h2>Projects needing an owner</h2><ul>{data.unassignedProjects.map(p=><li key={p.id}><Link href={'/projects/'+p.id}>{p.data.title}</Link> · Assign a project owner</li>)}</ul></section>}
+ </>}
+ <details className="panel hq-details"><summary>Existing calendar activity</summary><p>Legacy entries and recurring series stay in their existing editor. Their old status labels are not HQ platform confirmations.</p>{legacy.scheduled.length?<ul>{legacy.scheduled.map(p=><li key={p.id}>{p.data.title} · {calendarTime(p.data.date)} · legacy {p.data.status}</li>)}</ul>:<p>No existing dated calendar entries today.</p>}<Link href="/calendar">Open Calendar and recurring series →</Link></details>
+ </>;
 }
+function WorkSection({title,records,projects,staff,empty}:{title:string;records:HqRecord<Deliverable>[];projects:HqRecord<Project>[];staff:Staff[];empty:string}){return <section className="panel"><h2>{title}</h2>{records.length?<ul className="hq-deliverables">{records.map(({id,data:d})=><li key={id}><div><Link href={'/projects/work/'+id}>{d.title}</Link><p>Owner: {personName(d.owner,staff)}{d.blocked?' · Resolver: '+personName(d.blockedBy,staff):''}</p><p>{d.productionDue?calendarDay(d.productionDue)+' · '+calendarTime(d.productionDue):'Production deadline missing'}</p><p className="muted">Next: {nextAction(d,projects.find(p=>p.id===d.projectId)?.data)}</p></div><span className="tag">{productionStatuses[d.status]}</span></li>)}</ul>:<p className="muted">{empty}</p>}</section>;}
+export function PublishingSection({title,rows,staff,empty}:{title:string;rows:ScheduleRow[];staff:Staff[];empty:string}){return <section className="panel"><h2>{title}</h2>{rows.length?<ul className="hq-deliverables">{rows.map(r=><li key={r.key}><div><Link href={'/projects/work/'+r.id}>{r.title}</Link><p>{r.platform} · {calendarDay(r.date)} · {calendarTime(r.date)}</p><p>Publisher: {personName(r.publisher,staff)} · Owner: {personName(r.owner,staff)}</p><p className="muted">{r.status==='published'?'Publication recorded':r.status==='scheduled'?'Next: check the live post at the confirmed time':r.action}</p></div><span className="tag">{r.stateLabel}{r.status==='planned'?' · '+(r.ready?'Ready':'Unfinished'):''}</span></li>)}</ul>:<p className="muted">{empty}</p>}</section>;}

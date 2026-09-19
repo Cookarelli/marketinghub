@@ -13,6 +13,7 @@ export async function GET(request:Request) {
       return Response.json(data,{headers});
     }
     const offset=Number(url.searchParams.get('offset')||0);
+    if(kind==='spend'&&id&&Number.isSafeInteger(offset)&&offset>=0){const {data,error}=await client.rpc('hub_hq_operations',{p_action:'spend-list',p_payload:{projectId:id,offset}});if(error)throw error;return Response.json(data,{headers});}
     if(!['project','deliverable','request'].includes(kind||'') || !id || !Number.isSafeInteger(offset) || offset<0) return Response.json({error:'Choose a record and valid history page.'},{status:400,headers});
     const [{data:comments,error:commentsError},{data:activity,error:activityError}]=await Promise.all([
       client.from('hq_comments').select('*').eq('org_id',workspace).eq('kind',kind!).eq('record_id',id).order('created_at',{ascending:false}).order('id').range(offset,offset+24),
@@ -33,7 +34,7 @@ export async function POST(request:Request) {
     const parsed=hqCommand.safeParse(input);
     if(!parsed.success) return Response.json({error:parsed.error.issues[0]?.message||'Check the fields.'},{status:400,headers});
     const {action,...payload}=parsed.data;
-    const {data,error}=await (await db()).rpc('hub_hq',{p_action:action,p_payload:payload});
+    const {data,error}=await (await db()).rpc(['reschedule','reminders','notification-read','spend','spend-reverse','comment'].includes(action)?'hub_hq_operations':'hub_hq',{p_action:action,p_payload:payload});
     if(error) {
       if(['42501','40001','22023','23514'].includes(error.code)) return Response.json({error:error.message},{status:error.code==='42501'?403:error.code==='40001'?409:400,headers});
       throw error;

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 import {CalendarDays, FolderKanban, Images, Inbox, Sun} from 'lucide-react';
 import {hqSections, sectionForPath} from '@/lib/hq-navigation';
+import {HqNotifications} from '@/components/hq-notifications';
 import {SignOut} from '@/components/sign-out';
 
 const icons = {today: Sun, projects: FolderKanban, calendar: CalendarDays, requests: Inbox, assets: Images};
@@ -17,7 +18,7 @@ export function HqShell({children}: {children: React.ReactNode}) {
     <a className="skip-link" href="#hq-main">Skip to main content</a>
     <header className="masthead hq-masthead">
       <Link href="/today" className="hq-brand" aria-label="Northside HQ home"><span className="hq-monogram" aria-hidden="true">N</span><span>NORTHSIDE <b>HQ</b><small>Team workspace</small></span></Link>
-      <div className="header-meta"><span className="hq-private">Internal workspace</span><SignOut/></div>
+      <div className="header-meta"><HqNotifications/><span className="hq-private">Internal workspace</span><SignOut/></div>
     </header>
     <div className="hq-frame">
       <nav className="hq-navigation" aria-label="Main navigation">{hqSections.map(item => {
