@@ -1,8 +1,8 @@
-# Northside Marketing Hub
+# Northside HQ
 
-Team workspace for launch planning, content production, Content Radar, draft review, a shared calendar, campaign links, and results.
+Northside Collectibles’ internal workspace for projects, production, approvals and manual publishing. Primary navigation is Today, Projects, Calendar, Requests and Assets.
 
-This repository combines the latest readable Hub interface and news aggregator with the Next.js/Supabase deployment. Text is larger, navigation has labeled buttons, and News & Content Radar has a prominent entry point.
+The existing campaign editor, calendar, content studio, editorial review, source research, tracked links and reporting are reused. See [the Northside HQ inventory and release plan](docs/northside-hq.md) for the actual old-tab inventory, route compatibility, preserved data and first-release blockers. This change implements the shell and branding; project-owner approvals within an approved budget and durable in-app notifications still require additive workflow work before the first release.
 
 ## Run and verify
 
@@ -34,7 +34,7 @@ The login page includes **Forgot password?**. See [password recovery setup and v
 
 ## Content Radar
 
-Open Content Radar, add the starter sources, then use **Refresh sources** or add a link manually. Publisher content is unverified until reviewed. Collection preserves publisher snapshots, deduplicates URLs, skips overlapping jobs, and stops stale workers after settings change. Network fetching is restricted to the reviewed publisher host list; redirects, response size, and collection time are bounded.
+Open **Assets → Research & sources**, add the starter sources, then use **Refresh sources** or add a link manually. Publisher content is unverified until reviewed. Collection preserves publisher snapshots, deduplicates URLs, skips overlapping jobs, and stops stale workers after settings change. Network fetching is restricted to the reviewed publisher host list; redirects, response size, and collection time are bounded.
 
 Save a story, edit the captions and Reel outline, choose **Needs review**, and save. An administrator can approve the unchanged draft after required sources and media permissions are recorded. Approval does not publish externally. Add an approved draft to the shared calendar. Later material edits, fact changes, and product changes invalidate approval and mark the calendar copy for review.
 
